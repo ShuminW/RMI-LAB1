@@ -10,13 +10,12 @@ import java.util.ArrayList;
 
 public class TCPServer<T>{
     public static final int PORT = 12345;
-    Class<T> c;
-    T server;
+    Class<T> c = null;
+    T server = null;
     InetSocketAddress address = null;
     ServerSocket serverSocket = null;
     Skeleton skeleton = null;
     ArrayList<OPThread> threads = new ArrayList<>();
-    boolean started = false;
 
     HandlerThread handlerThread  = null;
 
@@ -68,6 +67,7 @@ public class TCPServer<T>{
     private class OPThread extends Thread {
 
         private Socket socket = null;
+        private Object ret = null;
 
         public OPThread(Socket socket) {
             this.socket = socket;
@@ -85,19 +85,24 @@ public class TCPServer<T>{
 
                 input = new ObjectInputStream(socket.getInputStream());
 
-                Method method = (Method)input.readObject();
+                String name = (String)input.readObject();
+
+                Class<?>[] type = (Class<?>[])input.readObject();
 
                 Object[] args = (Object[])input.readObject();
 
+                Method method = server.getClass().getMethod(name,type);
 
-                Object object = method.invoke(server, args);
-
-                output.writeObject(object);
+                ret = method.invoke(server, args);
 
             }
             catch (Exception e) {
+                ret = e;
+            }
+            try {
+                output.writeObject(ret);
+            } catch (IOException e) {
                 e.printStackTrace();
-
             }
             finally {
                 if(socket!=null) {
@@ -162,15 +167,8 @@ public class TCPServer<T>{
                     opThread.start();
                 }
 
-                try {
-                    for(OPThread t: threads) {
-                        t.join();
-                    }
-
-                }
-                catch(InterruptedException ep) {
-                    ep.printStackTrace();
-
+                for(OPThread t: threads) {
+                    t.join();
                 }
 
             } catch(SocketException e) {
@@ -187,7 +185,7 @@ public class TCPServer<T>{
 
                 }
             }
-            catch (IOException e) {
+            catch (Exception e) {
                 e.printStackTrace();
             }
 
