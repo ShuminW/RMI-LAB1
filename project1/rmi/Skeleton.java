@@ -29,6 +29,7 @@ public class Skeleton<T>
 
     private TCPServer<T> tcpServer;
     InetSocketAddress address = null;
+    boolean started;
     /** Creates a <code>Skeleton</code> with no initial server address. The
      address will be determined by the system when <code>start</code> is
      called. Equivalent to using <code>Skeleton(null)</code>.
@@ -172,8 +173,11 @@ public class Skeleton<T>
 
     public synchronized void start() throws RMIException
     {
-
+        if(started) {
+            return;
+        }
         tcpServer.start();
+        started = true;
 
 
     }
@@ -189,8 +193,12 @@ public class Skeleton<T>
      */
     public synchronized void stop()
     {
-        tcpServer.stopThread();
-        this.stopped(null);
+        if(started) {
+            tcpServer.stopThread();
+            this.stopped(null);
+            started = false;
+        }
+
     }
 
 

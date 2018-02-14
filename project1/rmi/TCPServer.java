@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 
 public class TCPServer<T>{
@@ -78,7 +77,6 @@ public class TCPServer<T>{
             ObjectOutputStream output = null;
 
             try {
-
                 output = new ObjectOutputStream(socket.getOutputStream());
 
                 output.flush();
@@ -94,7 +92,6 @@ public class TCPServer<T>{
                 Method method = server.getClass().getMethod(name,type);
 
                 ret = method.invoke(server, args);
-
             }
             catch (Exception e) {
                 ret = e;
@@ -166,28 +163,18 @@ public class TCPServer<T>{
 
                     opThread.start();
                 }
-
                 for(OPThread t: threads) {
                     t.join();
                 }
 
-            } catch(SocketException e) {
-                try {
-                    if(serverSocket.isClosed()){
-                        for(OPThread t: threads) {
-                            t.join();
-                        }
-                    }
-
-                }
-                catch(InterruptedException ep) {
-                    ep.printStackTrace();
-
-                }
             }
+            /*catch(SocketException e) {
+
+            }*/
             catch (Exception e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
+
 
         }
     }
