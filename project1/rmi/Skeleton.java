@@ -201,5 +201,7 @@ public class Skeleton<T>
 
     }
 
-
+    public InetSocketAddress getAddress() {
+        return address;
+    }
 }

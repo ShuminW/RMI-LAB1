@@ -5,16 +5,16 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 public class TCPServer<T>{
-    public static final int PORT = 12345;
+    public static final int PORT = 49152;
     Class<T> c = null;
     T server = null;
     InetSocketAddress address = null;
     ServerSocket serverSocket = null;
     Skeleton skeleton = null;
-    ArrayList<OPThread> threads = new ArrayList<>();
 
     HandlerThread handlerThread  = null;
 
@@ -135,6 +135,9 @@ public class TCPServer<T>{
 
         private volatile boolean stop = false;
 
+        ArrayList<OPThread> threads = new ArrayList<>();
+
+
         public HandlerThread(ServerSocket serverSocket) {
             this.serverSocket = serverSocket;
         }
@@ -163,14 +166,18 @@ public class TCPServer<T>{
 
                     opThread.start();
                 }
-                for(OPThread t: threads) {
-                    t.join();
-                }
+
 
             }
-            /*catch(SocketException e) {
-
-            }*/
+            catch(SocketException e) {
+                for(OPThread t: threads) {
+                    try {
+                        t.join();
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
             catch (Exception e) {
                 //e.printStackTrace();
             }
