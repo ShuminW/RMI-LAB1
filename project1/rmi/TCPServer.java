@@ -9,6 +9,10 @@ import java.net.SocketException;
 import java.util.ArrayList;
 
 
+/**
+ * Server for managing listening thread
+ * @param <T> server type
+ */
 public class TCPServer<T>{
     public static final int PORT = 49152;
     Class<T> c = null;
@@ -125,7 +129,6 @@ public class TCPServer<T>{
                         socket.close();
                     } catch (IOException e) {
                         skeleton.service_error(new rmi.RMIException(e.getMessage()));
-                        e.printStackTrace();
                     }
                 }
                 if(input != null) {
@@ -133,7 +136,6 @@ public class TCPServer<T>{
                         input.close();
                     } catch (IOException e) {
                         skeleton.service_error(new rmi.RMIException(e.getMessage()));
-                        e.printStackTrace();
                     }
                 }
                 if(output != null) {
@@ -141,7 +143,6 @@ public class TCPServer<T>{
                         output.close();
                     } catch (IOException e) {
                         skeleton.service_error(new rmi.RMIException(e.getMessage()));
-                        e.printStackTrace();
                     }
                 }
             }
@@ -155,7 +156,7 @@ public class TCPServer<T>{
      */
     private class HandlerThread extends Thread {
 
-        private ServerSocket serverSocket = null;
+        private ServerSocket serverSocket;
 
         private volatile boolean stop = false;
 
