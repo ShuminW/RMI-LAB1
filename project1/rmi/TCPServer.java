@@ -43,6 +43,10 @@ public class TCPServer<T>{
 
     }
 
+
+    /**
+     * @return whether is listening thread is running
+     */
     public boolean isAlive() {
         return handlerThread != null && handlerThread.isAlive();
     }
@@ -50,7 +54,7 @@ public class TCPServer<T>{
     /**
      * for bind address and start listening thread
      */
-    public void start() throws RMIException{
+    public void start() throws rmi.RMIException {
 
         try {
             if(address != null) {
