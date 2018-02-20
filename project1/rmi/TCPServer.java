@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+
 public class TCPServer<T>{
     public static final int PORT = 49152;
     Class<T> c = null;
@@ -26,6 +27,10 @@ public class TCPServer<T>{
 
     }
 
+
+    /**
+     * stop listening thread
+     */
     public void stopThread() {
         if(handlerThread != null) {
             handlerThread.stopThread();
@@ -38,16 +43,22 @@ public class TCPServer<T>{
 
     }
 
-    public void start() {
+    public boolean isAlive() {
+        return handlerThread != null && handlerThread.isAlive();
+    }
+
+    /**
+     * for bind address and start listening thread
+     */
+    public void start() throws RMIException{
 
         try {
-            serverSocket = new ServerSocket();
             if(address != null) {
-                serverSocket.bind(address);
+                serverSocket = new ServerSocket(address.getPort());
                 skeleton.address = address;
             }
             else {
-                serverSocket.bind(new InetSocketAddress(PORT));
+                serverSocket = new ServerSocket(PORT);
                 skeleton.address = new InetSocketAddress(serverSocket.getInetAddress(),
                         serverSocket.getLocalPort());
 
@@ -57,12 +68,14 @@ public class TCPServer<T>{
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RMIException(e.getMessage());
         }
     }
 
 
-
+    /**
+     * Thread for operation service
+     */
     private class OPThread extends Thread {
 
         private Socket socket = null;
@@ -99,6 +112,7 @@ public class TCPServer<T>{
             try {
                 output.writeObject(ret);
             } catch (IOException e) {
+                skeleton.service_error(new rmi.RMIException(e.getMessage()));
                 e.printStackTrace();
             }
             finally {
@@ -106,6 +120,7 @@ public class TCPServer<T>{
                     try {
                         socket.close();
                     } catch (IOException e) {
+                        skeleton.service_error(new rmi.RMIException(e.getMessage()));
                         e.printStackTrace();
                     }
                 }
@@ -113,6 +128,7 @@ public class TCPServer<T>{
                     try {
                         input.close();
                     } catch (IOException e) {
+                        skeleton.service_error(new rmi.RMIException(e.getMessage()));
                         e.printStackTrace();
                     }
                 }
@@ -120,6 +136,7 @@ public class TCPServer<T>{
                     try {
                         output.close();
                     } catch (IOException e) {
+                        skeleton.service_error(new rmi.RMIException(e.getMessage()));
                         e.printStackTrace();
                     }
                 }
@@ -129,6 +146,9 @@ public class TCPServer<T>{
         }
     }
 
+    /**
+     * listening handler thread
+     */
     private class HandlerThread extends Thread {
 
         private ServerSocket serverSocket = null;
@@ -179,7 +199,7 @@ public class TCPServer<T>{
                 }
             }
             catch (Exception e) {
-                //e.printStackTrace();
+                skeleton.listen_error(e);
             }
 
 

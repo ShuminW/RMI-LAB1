@@ -82,10 +82,13 @@ public class Skeleton<T>
         if(c == null || server == null) {
             throw new NullPointerException();
         }
+
+        //  check whether c is a interface
         if(!c.isInterface()) {
             throw new Error();
         }
 
+        // check whether methods are all marked as throwing RMIException
         for(Method method : c.getMethods()) {
             boolean containExp = false;
             for(Class<?> exception :method.getExceptionTypes()) {
@@ -174,7 +177,10 @@ public class Skeleton<T>
     public synchronized void start() throws RMIException
     {
         if(started) {
-            return;
+            throw new rmi.RMIException("server has already been started");
+        }
+        if(tcpServer.isAlive()) {
+            throw new rmi.RMIException("server has already been started");
         }
         tcpServer.start();
         started = true;
