@@ -15,13 +15,5 @@ public class ServerMain {
             e.printStackTrace();
         }
 
-        PingServerFactory factory = new PingServerFactory(skeleton);
-        Skeleton<PingServerFactory> skeleton1 = new Skeleton<PingServerFactory>(PingServerFactory.class, factory, new InetSocketAddress("localhost", 7000));
-        try {
-            skeleton1.start();
-        } catch (RMIException e) {
-            e.printStackTrace();
-        }
-
     }
 }
