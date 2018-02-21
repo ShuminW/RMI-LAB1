@@ -105,9 +105,7 @@ public class TCPServer<T>{
                 input = new ObjectInputStream(socket.getInputStream());
 
                 String name = (String)input.readObject();
-
-                System.out.println(name);
-
+                
                 Class<?>[] type = (Class<?>[])input.readObject();
 
                 Object[] args = (Object[])input.readObject();
