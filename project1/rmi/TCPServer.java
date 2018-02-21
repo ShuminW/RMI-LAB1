@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * @param <T> server type
  */
 public class TCPServer<T>{
-    public static final int PORT = 49152;
+
     Class<T> c = null;
     T server = null;
     InetSocketAddress address = null;
@@ -66,7 +66,7 @@ public class TCPServer<T>{
                 skeleton.address = address;
             }
             else {
-                serverSocket = new ServerSocket(PORT);
+                serverSocket = new ServerSocket(0);
                 skeleton.address = new InetSocketAddress(serverSocket.getInetAddress(),
                         serverSocket.getLocalPort());
 
@@ -105,7 +105,7 @@ public class TCPServer<T>{
                 input = new ObjectInputStream(socket.getInputStream());
 
                 String name = (String)input.readObject();
-                
+
                 Class<?>[] type = (Class<?>[])input.readObject();
 
                 Object[] args = (Object[])input.readObject();
