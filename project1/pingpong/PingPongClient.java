@@ -9,7 +9,7 @@ public class PingPongClient {
         PingPongServer stub = Stub.create(PingPongServer.class, new InetSocketAddress("128.2.13.138", 7000));
         try {
             for(int i = 0; i < 4; i++) {
-                stub.ping(i);
+                System.out.println(stub.ping(i));
             }
         }catch (Exception e) {
             e.printStackTrace();
