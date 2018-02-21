@@ -6,17 +6,11 @@ import rmi.Stub;
 
 import java.net.UnknownHostException;
 
-public class PingServerFactory {
+public class PingServerFactory implements PingPongServer{
 
-    Skeleton<PingPongServer> skeleton;
 
-    public PingServerFactory(Skeleton<PingPongServer> skeleton) {
-        this.skeleton = skeleton;
-    }
-
-    PingPongServer makePingServer() throws UnknownHostException {
-
-        return Stub.create(PingPongServer.class, skeleton);
-
+    @Override
+    public String ping(int idNumber) throws RMIException {
+        return "Pong" + idNumber;
     }
 }

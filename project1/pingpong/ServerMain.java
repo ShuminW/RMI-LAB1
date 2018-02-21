@@ -7,7 +7,7 @@ import java.net.InetSocketAddress;
 
 public class ServerMain {
     public static void main(String[] args) {
-        PingPongServer server = new PingPongServer();
+        PingPongServer server = new PingServerFactory();
         Skeleton<PingPongServer> skeleton = new Skeleton<PingPongServer>(PingPongServer.class,server);
         try {
             skeleton.start();

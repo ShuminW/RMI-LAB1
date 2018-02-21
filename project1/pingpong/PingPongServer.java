@@ -1,8 +1,7 @@
 package pingpong;
 import rmi.*;
-public class PingPongServer {
+public interface PingPongServer {
 
-    String ping(int idNumber) throws RMIException {
-        return "Pong" + idNumber;
-    }
+    String ping(int idNumber) throws RMIException;
+
 }
